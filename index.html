@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Typing - SESC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background stars canvas (shared across all screens) -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- ========== MENU SCREEN ========== -->
+    <div id="menu-screen" class="screen active">
+        <div class="menu-container">
+            <div class="logo-section">
+                <div class="club-badge">
+                    <i class="fas fa-satellite-dish"></i>
+                    <span>SESC</span>
+                </div>
+                <h1 class="game-title">
+                    <span class="title-space">SPACE</span>
+                    <span class="title-typing">TYPING</span>
+                </h1>
+                <p class="subtitle">
+                    <i class="fas fa-star"></i>
+                    Welcome Day Challenge
+                    <i class="fas fa-star"></i>
+                </p>
+            </div>
+
+            <div class="settings-panel">
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <i class="fas fa-gauge-high"></i> Difficulty
+                    </label>
+                    <div class="btn-group" id="difficulty-group">
+                        <button class="btn-option active" data-value="easy">
+                            <i class="fas fa-feather"></i> Easy
+                        </button>
+                        <button class="btn-option" data-value="medium">
+                            <i class="fas fa-fire"></i> Medium
+                        </button>
+                        <button class="btn-option" data-value="hard">
+                            <i class="fas fa-skull-crossbones"></i> Hard
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <i class="fas fa-font"></i> Case Sensitive
+                    </label>
+                    <div class="toggle-wrapper">
+                        <button class="toggle-switch" id="case-toggle" aria-pressed="false">
+                            <span class="toggle-track">
+                                <span class="toggle-label-off">OFF</span>
+                                <span class="toggle-label-on">ON</span>
+                                <span class="toggle-thumb">
+                                    <i class="fas fa-xmark toggle-icon-off"></i>
+                                    <i class="fas fa-check toggle-icon-on"></i>
+                                </span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="launch-btn" id="start-btn">
+                <i class="fas fa-rocket"></i>
+                <span>LAUNCH MISSION</span>
+            </button>
+
+            <div class="how-to-play">
+                <h3><i class="fas fa-circle-question"></i> How to Play</h3>
+                <div class="instructions-grid">
+                    <div class="instruction-item">
+                        <i class="fas fa-keyboard"></i>
+                        <span>Type the words on asteroids</span>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-crosshairs"></i>
+                        <span>Correct word = laser blast!</span>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-bolt"></i>
+                        <span>Build combos for bonus points</span>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Don't let them reach your ship!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-footer">
+                <i class="fas fa-graduation-cap"></i> SESC University Club
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== COUNTDOWN SCREEN ========== -->
+    <div id="countdown-screen" class="screen">
+        <div class="countdown-container">
+            <div class="countdown-number" id="countdown-display">3</div>
+            <p class="countdown-subtitle">Get Ready, Pilot!</p>
+        </div>
+    </div>
+
+    <!-- ========== GAME SCREEN ========== -->
+    <div id="game-screen" class="screen">
+        <canvas id="game-canvas"></canvas>
+        <div class="hud">
+            <div class="hud-left">
+                <div class="hud-item score-item">
+                    <i class="fas fa-star"></i>
+                    <span id="score-display">0</span>
+                </div>
+                <div class="hud-item combo-item" id="combo-container" style="opacity: 0;">
+                    <i class="fas fa-bolt"></i>
+                    <span id="combo-display">x1</span>
+                </div>
+            </div>
+            <div class="hud-center">
+                <div class="hud-item timer-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="timer-display">60</span>
+                </div>
+                <div class="timer-bar-container">
+                    <div class="timer-bar" id="timer-bar"></div>
+                </div>
+            </div>
+            <div class="hud-right">
+                <div class="hud-item lives-item" id="lives-display">
+                    <!-- hearts injected by JS -->
+                </div>
+                <div class="hud-item difficulty-badge" id="difficulty-badge">
+                    <!-- difficulty badge injected by JS -->
+                </div>
+            </div>
+        </div>
+        <div class="input-area">
+            <div class="input-wrapper" id="input-wrapper">
+                <i class="fas fa-angle-right input-caret"></i>
+                <input
+                    type="text"
+                    id="word-input"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    placeholder="Type here to shoot..."
+                >
+                <div class="input-target" id="input-target"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== GAME OVER SCREEN ========== -->
+    <div id="gameover-screen" class="screen">
+        <div class="gameover-container">
+            <div class="gameover-header">
+                <div class="gameover-icon" id="gameover-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h1 class="gameover-title" id="gameover-title">MISSION COMPLETE</h1>
+                <p class="gameover-subtitle" id="gameover-subtitle">Outstanding work, pilot!</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <span class="stat-value" id="final-score">0</span>
+                    <span class="stat-label">Score</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-pen-nib"></i></div>
+                    <span class="stat-value" id="final-words">0</span>
+                    <span class="stat-label">Words Typed</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+                    <span class="stat-value" id="final-wpm">0</span>
+                    <span class="stat-label">Words/Min</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+                    <span class="stat-value" id="final-combo">0x</span>
+                    <span class="stat-label">Best Combo</span>
+                </div>
+            </div>
+
+            <div class="gameover-badge">
+                <i class="fas fa-satellite-dish"></i>
+                SESC Welcome Day 2026
+            </div>
+
+            <div class="gameover-actions">
+                <button class="launch-btn" id="restart-btn">
+                    <i class="fas fa-rotate-right"></i>
+                    <span>PLAY AGAIN</span>
+                </button>
+                <button class="secondary-btn" id="menu-btn">
+                    <i class="fas fa-house"></i>
+                    <span>MAIN MENU</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
